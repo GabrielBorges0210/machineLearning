@@ -51,9 +51,17 @@ def baseline_models(data,preprocessor):
         rmse = root_mean_squared_error(y_testing,prediction)
         print(f"Model {name}: r2 = {r2} ", end='')
         print(f"and rmse = {rmse}")
-
+baseline_models(data,preprocessor)
 
 ## Results for the baseline models
 # Model: Gradient Regression r2 = 0.869372964490497 and rmse = 1018.9187110323095
 # Model: Random Forest Regression r2 = 0.8488226747304112 and rmse = 1096.1407685495867
 # Model: Linear Regression r2 = 0.8743160195901898 and rmse = 999.4543561951389
+
+
+## Let´s start tuning each model
+
+def linear_reg_tuning(data,preprocessor):
+    x = data.drop(columns = "price_usd")
+    y = data["price_usd"]
+    x_training,x_testing,y_training,y_testing = train_test_split(x,y, test_size= 0.35,random_state=42)
