@@ -3,6 +3,7 @@ import os
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
 import cv2
+import glob
 
 def empacotar_indices(indices: np.ndarray, bits_por_indice: int) -> bytes:
     """
@@ -95,7 +96,7 @@ def buscar_melhor_k_kmeans(vetores: np.ndarray, mse_maximo: float, max_bits: int
     # Retornamos melhor_bits e não k!
     return melhor_bits, melhor_modelo.cluster_centers_, melhor_indices
 
-def compactar_imagem(caminho_entrada: str, caminho_saida: str, mse_maximo: float = 50.0):
+def compactarImagem(caminho_entrada: str, caminho_saida: str, mse_maximo: float = 50.0):
     """
     Lê a imagem, quantiza vetorialmente e guarda no formato binário .kmc1.
     """
@@ -162,15 +163,34 @@ def compactar_imagem(caminho_entrada: str, caminho_saida: str, mse_maximo: float
     if tamanho_final > tamanho_original:
         print("AVISO: O overhead do dicionário tornou o ficheiro maior que o original.")
 
-# --- Exemplo de Uso ---
+def deletarArquivosNoDiretorio(path):
+    for arquivo in os.listdir(path):
+        caminhoCompleto = os.path.join(path, arquivo)
+        
+        if(os.path.isfile(caminhoCompleto)):
+            os.remove(caminhoCompleto)
+
 if __name__ == "__main__":
     os.makedirs("input", exist_ok=True)
     os.makedirs("output", exist_ok=True)
-    # Teste unitário sintético (gera uma imagem aleatória e compacta)
-    print("Gerando imagem de teste sintética...")
-    img_teste = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+    deletarArquivosNoDiretorio('output')
     
-    # OpenCV salva em BGR, então convertemos de RGB para BGR antes de salvar
-    cv2.imwrite("input/teste.bmp", cv2.cvtColor(img_teste, cv2.COLOR_RGB2BGR))
+    arquivos_input = [f for f in glob.glob("input/*") if os.path.isfile(f)]
     
-    compactar_imagem("input/teste.bmp", "output/compressedFile.kmc1", mse_maximo=100.0)
+    # Se estiver vazia, gera o arquivo para teste
+    if len(arquivos_input) == 0:
+        print("Pasta 'input/' vazia. Gerando imagem sintética de teste...")
+        img_teste = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+        caminho_entrada = "input/teste.bmp"
+        cv2.imwrite(caminho_entrada, cv2.cvtColor(img_teste, cv2.COLOR_RGB2BGR))
+    
+    # Se houver mais de 1 arquivo, avisa e impõe a regra de 1 único arquivo
+    elif len(arquivos_input) > 1:
+        print(f"Atenção: A lógica do sistema exige apenas 1 arquivo. Pegando o primeiro e limpando o resto.")
+        caminho_entrada = arquivos_input[0]
+        for f in arquivos_input[1:]:
+            os.remove(f)
+    else:
+        caminho_entrada = arquivos_input[0]
+    
+    compactarImagem(caminho_entrada, "output/compressedFile.kmc1", mse_maximo=15.0)

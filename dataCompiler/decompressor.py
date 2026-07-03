@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import os
 
-def desempacotar_indices(bytes_empacotados: bytes, bits_por_indice: int, total_pixels: int) -> np.ndarray:
+def desempacotarIndices(bytes_empacotados: bytes, bits_por_indice: int, total_pixels: int) -> np.ndarray:
     """
     Desfaz o bit-packing, transformando um array de bytes nativos (uint8)
     de volta em um array expandido de índices (uint8).
@@ -44,7 +44,7 @@ def desempacotar_indices(bytes_empacotados: bytes, bits_por_indice: int, total_p
     # Truncamos o array para o tamanho exato de pixels da imagem original.
     return indices[:total_pixels]
 
-def descompactar_arquivo(caminho_arquivo_entrada: str) -> np.ndarray:
+def descompactarArquivo(caminho_arquivo_entrada: str) -> np.ndarray:
     """
     Lê o arquivo binário customizado, extrai o cabeçalho, os centroides
     e reconstrói a matriz original da imagem.
@@ -89,7 +89,7 @@ def descompactar_arquivo(caminho_arquivo_entrada: str) -> np.ndarray:
         
         # Desempacotamento e Reconstrução
         print("Desempacotando índices...")
-        indices_recuperados = desempacotar_indices(payload_bytes, bits_por_indice, total_pixels)
+        indices_recuperados = desempacotarIndices(payload_bytes, bits_por_indice, total_pixels)
         
         print("Reconstruindo imagem original...")
         # Usa indexação avançada do NumPy para mapear cada índice para seu centroide correspondente
@@ -108,17 +108,15 @@ def deletarArquivosNoDiretorio(path):
         if(os.path.isfile(caminhoCompleto)):
             os.remove(caminhoCompleto)
 
-# --- Exemplo de uso (Não executável diretamente sem o arquivo .kmc1) ---
 if __name__ == "__main__":
     try:
-        imagem = descompactar_arquivo("output/compressedFile.kmc1")
+        imagem = descompactarArquivo("output/compressedFile.kmc1")
         print(f"Sucesso! Imagem reconstruída com shape: {imagem.shape}")
         
         deletarArquivosNoDiretorio("output")
-        # deletarArquivosNoDiretorio("input")
         
         # Salvar para visualizar usando OpenCV (convertendo de volta para BGR)
-        cv2.imwrite("output/imagem_restaurada.jpeg", cv2.cvtColor(imagem, cv2.COLOR_RGB2BGR))
+        cv2.imwrite("output/imagem_restaurada.bmp", cv2.cvtColor(imagem, cv2.COLOR_RGB2BGR))
         
     except Exception as e:
         print(f"Erro na descompactação: {e}")
