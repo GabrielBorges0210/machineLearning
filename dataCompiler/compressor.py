@@ -5,7 +5,7 @@ from sklearn.cluster import MiniBatchKMeans
 import cv2
 import glob
 
-def empacotar_indices(indices: np.ndarray, bits_por_indice: int) -> bytes:
+def empacotarIndices(indices: np.ndarray, bits_por_indice: int) -> bytes:
     """
     Empacota um array de inteiros de tamanhos sub-byte (1, 2, 4 bits)
     em um array de bytes nativos (uint8) usando NumPy vetorizado.
@@ -45,7 +45,7 @@ def empacotar_indices(indices: np.ndarray, bits_por_indice: int) -> bytes:
     else:
         raise ValueError("Este compressor exige potências de 2 exatas (1, 2, 4 ou 8 bits).")
 
-def buscar_melhor_k_kmeans(vetores: np.ndarray, mse_maximo: float, max_bits: int = 8):
+def buscarMelhorKMmeans(vetores: np.ndarray, mse_maximo: float, max_bits: int = 8):
     """
     Busca a menor potência de 2 para K tal que o MSE seja inferior a mse_maximo.
     
@@ -125,10 +125,10 @@ def compactarImagem(caminho_entrada: str, caminho_saida: str, mse_maximo: float 
     print(f"Iniciando compressão de {largura}x{altura} píxeis...")
     
     # Treino
-    bits, centroides, indices = buscar_melhor_k_kmeans(vetores, mse_maximo)
+    bits, centroides, indices = buscarMelhorKMmeans(vetores, mse_maximo)
     
     # Bit-packing
-    payload_bytes = empacotar_indices(indices, bits)
+    payload_bytes = empacotarIndices(indices, bits)
     
     # Construção do Cabeçalho e Escrita Binária
     with open(caminho_saida, 'wb') as f:

@@ -69,10 +69,9 @@ def descompactarArquivo(caminho_arquivo_entrada: str) -> np.ndarray:
         total_pixels = largura * altura
         k_centroides = 2 ** bits_por_indice
         
-        print(f"Lendo cabeçalho: {largura}x{altura}, Canais: {canais}, Bits/Pixel: {bits_por_indice} (K={k_centroides})")
+        print(f"Cabeçalho: {largura}x{altura}, Canais: {canais}, Bits/Pixel: {bits_por_indice} (K={k_centroides})")
         
         # Leitura do Dicionário (Centroides)
-        # Os centroides são salvos como floats ou ints.
         # Centroides são floats (4 bytes por valor)
         # A quantidade de valores é K * canais
         tamanho_centroides = k_centroides * canais
@@ -88,10 +87,7 @@ def descompactarArquivo(caminho_arquivo_entrada: str) -> np.ndarray:
         payload_bytes = f.read()
         
         # Desempacotamento e Reconstrução
-        print("Desempacotando índices...")
         indices_recuperados = desempacotarIndices(payload_bytes, bits_por_indice, total_pixels)
-        
-        print("Reconstruindo imagem original...")
         # Usa indexação avançada do NumPy para mapear cada índice para seu centroide correspondente
         vetores_reconstruidos = centroides[indices_recuperados]
         
@@ -111,7 +107,7 @@ def deletarArquivosNoDiretorio(path):
 if __name__ == "__main__":
     try:
         imagem = descompactarArquivo("output/compressedFile.kmc1")
-        print(f"Sucesso! Imagem reconstruída com shape: {imagem.shape}")
+        print(f"Imagem reconstruída com shape: {imagem.shape}")
         
         deletarArquivosNoDiretorio("output")
         
