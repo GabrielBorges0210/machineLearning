@@ -21,7 +21,7 @@ def desempacotarIndices(bytes_empacotados: bytes, bits_por_indice: int, total_pi
         # Usamos uma máscara bitwise AND (0x0F = 00001111) para pegar o índice inferior (direita)
         indices_inferiores = array_bytes & 0x0F
         
-        # Juntamos as duas colunas
+        # Junta as duas colunas
         indices = np.column_stack((indices_superiores, indices_inferiores)).flatten()
         
     elif bits_por_indice == 2:
@@ -111,7 +111,6 @@ if __name__ == "__main__":
         
         deletarArquivosNoDiretorio("output")
         
-        # Salvar para visualizar usando OpenCV (convertendo de volta para BGR)
         cv2.imwrite("output/imagem_restaurada.bmp", cv2.cvtColor(imagem, cv2.COLOR_RGB2BGR))
         
     except Exception as e:

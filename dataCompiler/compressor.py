@@ -184,7 +184,6 @@ if __name__ == "__main__":
         caminho_entrada = "input/teste.bmp"
         cv2.imwrite(caminho_entrada, cv2.cvtColor(img_teste, cv2.COLOR_RGB2BGR))
     
-    # Se houver mais de 1 arquivo, avisa e impõe a regra de 1 único arquivo
     elif len(arquivos_input) > 1:
         print(f"Atenção: A lógica do sistema exige apenas 1 arquivo. Pegando o primeiro e limpando o resto.")
         caminho_entrada = arquivos_input[0]
